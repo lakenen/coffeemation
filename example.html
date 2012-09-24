@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>Animation.js</title>
+	<style type="text/css">
+
+		body{
+			color:#444;
+			font-family: Verdana, Arial, sans-serif;
+			font-size:12px;
+			line-height:1.5em;
+			width: 75em;
+			margin: 10px auto;
+			padding: 1em;
+		}
+		h1 {
+			font-weight: 300;
+		}
+		canvas {
+			border: 1px solid black;
+		}
+	</style>
+	<script type="text/javascript" src="coffeemation.js"></script>
+</head>
+
+<body>
+	<a href="https://github.com/camupod/coffeemation"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"></a>
+
+	<h1>CoffeeMation: Animating objects on a Canvas element</h1>
+	<canvas id="canvas" width="800" height="600"></canvas>
+	<script type="text/javascript">
+		var ctx = document.getElementById('canvas').getContext('2d');
+		ctx.shadowColor = 'rgba(0,0,0,0.7)';
+		ctx.shadowBlur = 8;
+		ctx.shadowOffsetX = 3;
+		ctx.shadowOffsetY = 3;
+		var dot = {
+			radius: 10,
+			x: 0,
+			y: 0,
+			hue: 0
+		};
+		
+		(function animate() {
+			var anim = new CoffeeMation.Transform(dot, {
+				to: {
+					x: (ctx.canvas.width-120)*Math.random()+60,
+					y: (ctx.canvas.height-120)*Math.random()+60,
+					radius: 50*Math.random() + 10,
+					hue: 360*Math.random()
+				},
+				duration: 2*Math.random()+0.25,
+				transition: CoffeeMation.Transitions.random(),
+				onUpdate: function () {
+					ctx.fillStyle = 'hsl('+((dot.hue-180)%360)+',100%,50%)';
+					document.body.style.backgroundColor = 'hsl('+((dot.hue-180)%360)+',30%,80%)';
+					ctx.fillRect(0,0,ctx.canvas.width,ctx.canvas.height);
+					ctx.fillStyle = 'hsl('+dot.hue+',100%,50%)';
+					ctx.beginPath();
+					ctx.arc(dot.x, dot.y, Math.max(dot.radius,1), 0, Math.PI*2, true);
+					ctx.closePath();
+					ctx.fill();
+				},
+				onFinish: animate
+			});
+		})();
+	</script>
+</body>
+</html>
+	
