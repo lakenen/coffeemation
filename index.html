@@ -35,15 +35,20 @@
 		ctx.shadowBlur = 8;
 		ctx.shadowOffsetX = 3;
 		ctx.shadowOffsetY = 3;
-		var dot = {
+		var dot1 = {
 			radius: 10,
 			x: 0,
 			y: 0,
 			hue: 0
 		};
-		
-		(function animate() {
-			var anim = new CoffeeMation.Transform(dot, {
+		var dot2 = {
+			radius: 10,
+			x: 0,
+			y: 0,
+			hue: 0
+		};
+		function animate(thing) {
+			var anim = new CoffeeMation.Transform(thing, {
 				to: {
 					x: (ctx.canvas.width-120)*Math.random()+60,
 					y: (ctx.canvas.height-120)*Math.random()+60,
@@ -52,20 +57,26 @@
 				},
 				duration: 2*Math.random()+0.25,
 				transition: CoffeeMation.Transitions.random(),
-				onUpdate: function () {
-					ctx.fillStyle = 'hsl('+((dot.hue-180)%360)+',100%,50%)';
-					document.body.style.backgroundColor = 'hsl('+((dot.hue-180)%360)+',30%,80%)';
-					ctx.fillRect(0,0,ctx.canvas.width,ctx.canvas.height);
-					ctx.fillStyle = 'hsl('+dot.hue+',100%,50%)';
-					ctx.beginPath();
-					ctx.arc(dot.x, dot.y, Math.max(dot.radius,1), 0, Math.PI*2, true);
-					ctx.closePath();
-					ctx.fill();
-				},
-				onFinish: animate
+				onFinish: function () { animate(thing); }
 			});
-		})();
+		}
+		function draw(thing) {
+			ctx.fillStyle = 'hsl('+thing.hue+',100%,50%)';
+			ctx.beginPath();
+			ctx.arc(thing.x, thing.y, Math.max(thing.radius,1), 0, Math.PI*2, true);
+			ctx.closePath();
+			ctx.fill();
+		}
+		function loop() {
+			ctx.fillStyle = 'hsl('+((dot1.hue-180)%360)+',100%,50%)';
+			document.body.style.backgroundColor = 'hsl('+((dot1.hue-180)%360)+',30%,80%)';
+			ctx.fillRect(0,0,ctx.canvas.width,ctx.canvas.height);
+			draw(dot1); draw(dot2)
+			requestAnimationFrame(loop, ctx.canvas);
+		}
+		animate(dot1); animate(dot2);
+		loop();
 	</script>
 </body>
 </html>
-	
+

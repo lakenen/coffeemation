@@ -210,19 +210,16 @@
   CoffeeMation.defaults.transition = CoffeeMation.Transitions.Exponential;
 
   CoffeeMation.Base = (function() {
-    var currentFrame, duration, ends, onstartCalled, position, starts, totalFrames;
-
-    starts = duration = ends = currentFrame = totalFrames = position = onstartCalled = void 0;
 
     function Base(options) {
       var _this = this;
       this.options = merge(CoffeeMation.defaults, options);
-      starts = new Date().getTime();
-      duration = this.options.duration * 1000;
-      ends = starts + duration;
-      currentFrame = 0;
-      totalFrames = this.options.duration * this.options.fps;
-      position = 0;
+      this.starts = new Date().getTime();
+      this.duration = this.options.duration * 1000;
+      this.ends = this.starts + this.duration;
+      this.currentFrame = 0;
+      this.totalFrames = this.options.duration * this.options.fps;
+      this.position = 0;
       defer(function() {
         return add(_this);
       });
@@ -230,13 +227,13 @@
 
     Base.prototype._update = function(time) {
       var frame, pos, _base, _base1;
-      if (time >= starts) {
-        if (!onstartCalled) {
+      if (time >= this.starts) {
+        if (!this.onstartCalled) {
           if (typeof (_base = this.options).onStart === "function") {
             _base.onStart();
           }
         }
-        if (time >= ends) {
+        if (time >= this.ends) {
           this._render(1);
           this.cancel();
           if (typeof (_base1 = this.options).onFinish === "function") {
@@ -244,23 +241,23 @@
           }
           return;
         }
-        pos = (time - starts) / duration;
-        frame = Math.round(pos * totalFrames);
-        if (frame > currentFrame) {
+        pos = (time - this.starts) / this.duration;
+        frame = Math.round(pos * this.totalFrames);
+        if (frame > this.currentFrame) {
           this._render(pos);
-          return currentFrame = frame;
+          return this.currentFrame = frame;
         }
       }
     };
 
     Base.prototype._render = function(pos) {
       var _base, _base1, _base2, _base3;
-      position = (typeof (_base = this.options).transition === "function" ? _base.transition(pos) : void 0) || 0;
+      this.position = (typeof (_base = this.options).transition === "function" ? _base.transition(pos) : void 0) || 0;
       if (this.render != null) {
         if (typeof (_base1 = this.options).onBeforeUpdate === "function") {
           _base1.onBeforeUpdate();
         }
-        this.render(position);
+        this.render(this.position);
         if (typeof (_base2 = this.options).onAfterUpdate === "function") {
           _base2.onAfterUpdate();
         }
@@ -283,11 +280,11 @@
     };
 
     Base.prototype.finish = function() {
-      return typeof this._update === "function" ? this._update(ends) : void 0;
+      return typeof this._update === "function" ? this._update(this.ends) : void 0;
     };
 
     Base.prototype.finished = function() {
-      return currentFrame >= totalFrames;
+      return this.currentFrame >= this.totalFrames;
     };
 
     return Base;

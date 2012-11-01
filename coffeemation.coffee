@@ -1,4 +1,4 @@
-# some helpers 
+# some helpers
 extend = (object, properties) ->
 	for key, val of properties
 		object[key] = val
@@ -21,7 +21,7 @@ do () ->
 		for vendor in vendors
 			@requestAnimationFrame or= @[vendor+'RequestAnimationFrame']
 			@cancelAnimationFrame = @cancelRequestAnimationFrame or= @[vendor+'CancelRequestAnimationFrame']
-	  
+
 	unless @requestAnimationFrame
 		@requestAnimationFrame = (callback, element) ->
 			currTime = new Date().getTime()
@@ -69,7 +69,7 @@ runLoop = () ->
 	for animation in animations
 		animation?._update? new Date().getTime()
 
-CoffeeMation = 
+CoffeeMation =
 	# statics
 	defaults:
 		duration: 1.0
@@ -78,7 +78,7 @@ CoffeeMation =
 
 	Transitions:
 		_all: []
-		random: () -> 
+		random: () ->
 			all = CoffeeMation.Transitions._all
 			transition = all[Math.floor(Math.random() * all.length)]
 			return transition
@@ -122,7 +122,7 @@ CoffeeMation.Transitions.add
 	Elastic: (p) -> 1 - Math.cos(p * 4.5 * Math.PI) * Math.exp(-p * 6)
 
 	Exponential: (p) -> if p == 1 then p else 1 - Math.pow 2, -10 * p
-	
+
 	Linear: (p) -> p
 
 	Sine: (p) -> Math.sin(p * Math.PI / 2)
@@ -130,40 +130,38 @@ CoffeeMation.Transitions.add
 CoffeeMation.defaults.transition = CoffeeMation.Transitions.Exponential
 
 class CoffeeMation.Base
-	starts = duration = ends = currentFrame = totalFrames = position = onstartCalled = undefined
-
 	# publics
 	constructor: (options) ->
-		@options		= merge CoffeeMation.defaults, options
-		starts			= new Date().getTime()
-		duration		= @options.duration * 1000
-		ends			= starts + duration
-		currentFrame	= 0
-		totalFrames		= @options.duration * @options.fps
-		position		= 0
+		@options			= merge CoffeeMation.defaults, options
+		@starts				= new Date().getTime()
+		@duration			= @options.duration * 1000
+		@ends					= @starts + @duration
+		@currentFrame	= 0
+		@totalFrames	= @options.duration * @options.fps
+		@position			= 0
 
 		defer => add @
 
 	_update: (time) ->
-		if time >= starts
-			if not onstartCalled
+		if time >= @starts
+			if not @onstartCalled
 				@options.onStart?()
-			if time >= ends
+			if time >= @ends
 				@_render 1
 				@cancel()
 				@options.onFinish?()
 				return
-			pos = (time - starts) / duration
-			frame = Math.round pos * totalFrames
-			if frame > currentFrame
+			pos = (time - @starts) / @duration
+			frame = Math.round pos * @totalFrames
+			if frame > @currentFrame
 				@_render pos
-				currentFrame = frame
+				@currentFrame = frame
 
 	_render: (pos) ->
-		position = @options.transition?(pos) or 0
+		@position = @options.transition?(pos) or 0
 		if @render?
 			@options.onBeforeUpdate?()
-			@render position 
+			@render @position
 			@options.onAfterUpdate?()
 			@options.onUpdate?()
 		else
@@ -175,9 +173,9 @@ class CoffeeMation.Base
 		@options.onStop?()
 		remove(@)
 
-	finish: () -> @_update?(ends)
+	finish: () -> @_update?(@ends)
 
-	finished: () -> currentFrame >= totalFrames
+	finished: () -> @currentFrame >= @totalFrames
 
 class CoffeeMation.Transform extends CoffeeMation.Base
 	doRender = (obj, from, to, pos) ->
