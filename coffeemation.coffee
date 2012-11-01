@@ -1,3 +1,5 @@
+## CoffeeMation version 1.0.1 - Cameron Lakenen
+
 # some helpers
 extend = (object, properties) ->
 	for key, val of properties
