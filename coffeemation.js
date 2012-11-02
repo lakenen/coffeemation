@@ -306,7 +306,7 @@
         } else if (typeof to[attr] === 'number') {
           _results.push(obj[attr] = (to[attr] - from[attr]) * pos + from[attr]);
         } else {
-          _results.push(void 0);
+          _results.push(obj[attr] = to[attr]);
         }
       }
       return _results;

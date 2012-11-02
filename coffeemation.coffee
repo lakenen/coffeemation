@@ -1,4 +1,4 @@
-## CoffeeMation version 1.0.1 - Cameron Lakenen
+## CoffeeMation version 1.0.2 - Cameron Lakenen
 
 # some helpers
 extend = (object, properties) ->
@@ -186,6 +186,8 @@ class CoffeeMation.Transform extends CoffeeMation.Base
 				doRender obj[attr], from[attr], to[attr], pos
 			else if typeof to[attr] == 'number'
 				obj[attr] = (to[attr] - from[attr]) * pos + from[attr]
+			else # can't transform it, so just set it to "to" value
+				obj[attr] = to[attr]
 
 	constructor: (object, options) ->
 		super options
